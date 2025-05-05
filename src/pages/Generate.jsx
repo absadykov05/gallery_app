@@ -14,7 +14,7 @@ export default function Generate() {
         setGeneratedImage("");
 
         try {
-            const res = await axios.post("http://localhost:5000/api/generate", {
+            const res = await axios.post("/api/generate", {
                 prompt: textPrompt,
             });
             setGeneratedImage(res.data.image);
