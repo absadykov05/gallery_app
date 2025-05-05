@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     try {
         // Используем Pollinations API или другой
         const response = await axios.get(
-            "https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}"
+            `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`
     );
 
         return res.status(200).json({ image: response.request.res.responseUrl });
