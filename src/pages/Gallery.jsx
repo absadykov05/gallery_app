@@ -59,7 +59,6 @@ function ImageCard({ src, onFavorite, onDelete, isFavorite }) {
                             right: "8px",
                             backgroundColor: "transparent",
                             padding: "6px",
-                            // borderRadius: "50%",
                             zIndex: 10,
                             cursor: "pointer",
                             color: "#fff",
@@ -74,9 +73,10 @@ function ImageCard({ src, onFavorite, onDelete, isFavorite }) {
 }
 
 export default function Gallery() {
-    const images = useLiveQuery(() => db.images.toArray(), []);
+    const allImages = useLiveQuery(() => db.images.toArray(), []);
     const favorites = useLiveQuery(() => db.favorites.toArray(), []);
     const [view, setView] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
 
     const handleUpload = async (e) => {
         const files = Array.from(e.target.files);
@@ -90,7 +90,8 @@ export default function Gallery() {
 
         const base64Images = await Promise.all(files.map(file => toBase64(file)));
         for (const src of base64Images) {
-            await db.images.add({ src });
+            const hashtag = prompt("Введите хэштег для изображения:");
+            await db.images.add({ src, isGenerated: false, hashtag });
         }
     };
 
@@ -109,7 +110,8 @@ export default function Gallery() {
     const handleDelete = async (src) => {
         const toDelete = await db.images.where({ src }).toArray();
         for (const item of toDelete) {
-            await db.images.delete(item.id);
+            await db.images.
+            delete(item.id);
         }
         const toDeleteFav = await db.favorites.where({ src }).toArray();
         for (const item of toDeleteFav) {
@@ -117,30 +119,46 @@ export default function Gallery() {
         }
     };
 
-    const filteredImages = view === "favorites" ? favorites : images;
+    const filteredImages = allImages
+        ?.filter(img => {
+            if (view === "favorites") return favorites?.some(fav => fav.src === img.src);
+            if (view === "generated") return img.isGenerated;
+            return true;
+        })
+        .filter(img =>
+            !searchTerm || (img.hashtag || "").toLowerCase().includes(searchTerm.toLowerCase())
+);
 
     return (
         <div className="w-full min-h-screen flex flex-col">
-            <h2 className="text-2xl font-semibold mb-2 z-10 bg-white pl-4 pt-2"
-                style = {{marginLeft: 10}}>Моя галерея</h2>
+            <div className="z-10 bg-white px-4 pt-2">
+                <h2 className="text-2xl font-semibold mb-2">Моя галерея</h2>
 
-            <div className="flex gap-4 mb-2 z-10 bg-white pl-4" style ={{marginLeft: 5}}>
-                <button onClick={() => setView("all")}
-                        className={`px-4 py-2 rounded ${view === "all" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>Все
-                </button>
-                <button onClick={() => setView("favorites")}
-                        className={`px-4 py-2 rounded ${view === "favorites" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>Избранные
-                </button>
-            </div>
+                <div className="flex gap-4 mb-2">
+                    <button onClick={() => setView("all")}
+                            className={`px-4 py-2 rounded ${view === "all" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>Все</button>
+                    <button onClick={() => setView("favorites")}
+                            className={`px-4 py-2 rounded ${view === "favorites" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>Избранные</button>
+                    <button onClick={() => setView("generated")}
+                            className={`px-4 py-2 rounded ${view === "generated" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>Сгенерированные</button>
+                    <input
+                        type="text"
+                        placeholder="Поиск по хэштегу"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="ml-auto px-3 py-2 border border-gray-300 rounded w-1/3"
+                    />
+                </div>
 
-            <div className="my-2 z-10 bg-white px-4" style ={{marginLeft: 5}}>
-                <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleUpload}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                />
+                <div className="my-2">
+                    <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleUpload}
+                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                </div>
             </div>
 
             <div className="grid grid-cols-5 gap-4 px-2 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 139px)' }}>

@@ -1,21 +1,21 @@
 import { useState } from "react";
 import axios from "axios";
-import { addImageToGallery } from "../db"; // добавь этот импорт
+import { addImageToGallery } from "../db";
 
 export default function Generate() {
-    const [prompt, setPrompt] = useState("");
+    const [textPrompt, setTextPrompt] = useState("");
     const [loading, setLoading] = useState(false);
     const [generatedImage, setGeneratedImage] = useState("");
 
     const handleGenerate = async () => {
-        if (!prompt.trim()) return;
+        if (!textPrompt.trim()) return;
 
         setLoading(true);
         setGeneratedImage("");
 
         try {
             const res = await axios.post("http://localhost:5000/api/generate", {
-                prompt,
+                prompt: textPrompt,
             });
             setGeneratedImage(res.data.image);
         } catch (err) {
@@ -28,8 +28,11 @@ export default function Generate() {
 
     const handleAddToGallery = async () => {
         if (generatedImage) {
-            await addImageToGallery(generatedImage);
-            alert("Изображение добавлено в галерею!");
+            const hashtag = window.prompt("Введите хэштег для изображения:");
+            if (hashtag !== null) {
+                await addImageToGallery(generatedImage, hashtag, true);
+                alert("Изображение добавлено в галерею!");
+            }
         }
     };
 
@@ -39,8 +42,8 @@ export default function Generate() {
             <div style={{ display: 'flex', gap: '0.5rem', maxWidth: '32rem', width: '100%' }}>
                 <input
                     type="text"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
+                    value={textPrompt}
+                    onChange={(e) => setTextPrompt(e.target.value)}
                     placeholder="Введите описание..."
                     style={{
                         flexGrow: 1,

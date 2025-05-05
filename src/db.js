@@ -7,6 +7,6 @@ db.version(1).stores({
     favorites: "++id, src"
 });
 
-export async function addImageToGallery(src) {
-    await db.images.add({ src });
+export async function addImageToGallery(src, hashtag = "", isGenerated = false) {
+    await db.images.add({ src, hashtag, isGenerated });
 }
