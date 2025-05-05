@@ -132,25 +132,67 @@ export default function Gallery() {
     return (
         <div className="w-full min-h-screen flex flex-col">
             <div className="z-10 bg-white px-4 pt-2">
-                <h2 className="text-2xl font-semibold mb-2">Моя галерея</h2>
+                <h2 className="text-2xl font-semibold mb-2" style={{marginLeft: 5}}>Моя галерея</h2>
 
-                <div className="flex gap-4 mb-2">
-                    <button onClick={() => setView("all")}
-                            className={`px-4 py-2 rounded ${view === "all" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>Все</button>
-                    <button onClick={() => setView("favorites")}
-                            className={`px-4 py-2 rounded ${view === "favorites" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>Избранные</button>
-                    <button onClick={() => setView("generated")}
-                            className={`px-4 py-2 rounded ${view === "generated" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>Сгенерированные</button>
-                    <input
-                        type="text"
-                        placeholder="Поиск по хэштегу"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                <div className="flex" style={{marginLeft: 5, marginTop: -10, justifyContent: 'center'}}>
+                    <div className="flex" style={{gap: 5}}>
+                        <button onClick={() => setView("all")}
+                                className={`px-4 py-2 rounded`}
+                                style={{
+                                    backgroundColor: view === "all" ? "#6b7280" : "",
+                                    color: "#ffffff",
+                                    padding: "0.5rem 1rem",
+                                    borderRadius: "0.5rem",
+                                    border: "none",
+                                    outline: "none",
+                                    boxShadow: "none",
+                                }}>Все
+                        </button>
+                        <button onClick={() => setView("favorites")}
+                                className={`px-4 py-2 rounded`}
+                                style={{
+                                    backgroundColor: view === "favorites" ? "#6b7280" : "",
+                                    color: "#ffffff",
+                                    padding: "0.5rem 1rem",
+                                    borderRadius: "0.5rem",
+                                    border: "none",
+                                    outline: "none",
+                                    boxShadow: "none",
+                                }}>Избранные
+                        </button>
+                        <button onClick={() => setView("generated")}
+                                className={`px-4 py-2 rounded`}
+                                style={{
+                                    backgroundColor: view === "generated" ? "#6b7280" : "",
+                                    color: "#ffffff",
+                                    padding: "0.5rem 1rem",
+                                    borderRadius: "0.5rem",
+                                    border: "none",
+                                    outline: "none",
+                                    boxShadow: "none",
+                                }}>Сгенерированные
+                        </button>
+                    </div>
+                    <input style={{
+                        width: "20%",
+                        height: '30px',
+                        marginTop: 5,
+                        marginRight: 5,
+                        padding: '0 12px',
+                        borderRadius: '8px',
+                        border: '1px solid #d1d5db',
+                        outline: 'none',
+                        fontSize: '1rem',
+                    }}
+                           type="text"
+                           placeholder="Поиск по хэштегу"
+                           value={searchTerm}
+                           onChange={(e) => setSearchTerm(e.target.value)}
                         className="ml-auto px-3 py-2 border border-gray-300 rounded w-1/3"
                     />
                 </div>
 
-                <div className="my-2">
+                <div className="my-2" style={{marginLeft: 5, marginTop: 5, marginBottom: 5}}>
                     <input
                         type="file"
                         multiple
